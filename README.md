@@ -59,7 +59,8 @@ review section entirely.
   something a plugin manifest alone can do, and out of scope for the public
   `editor.pascal.app` catalog under plugin API v1 — only viable if you run
   Pascal yourself via `npx @pascal-app/cli editor` and are your own reviewing
-  host.
+  host. See [`HOST_INTEGRATION.md`](./HOST_INTEGRATION.md) for the concrete
+  plan.
 
 ## Structure
 
@@ -94,6 +95,10 @@ review section entirely.
   a full node and calls `createNode` on the active level directly.
 - **`definition.ts`** / **`index.ts`** — the `NodeDefinition` and the plugin
   manifest (`thebossnow:mezcal`, node kind `mezcal:site-plan`).
+- **`host-adapter.ts`** — Phase 3 type scaffolding only (see
+  `HOST_INTEGRATION.md`): the shape a future live-round-trip server adapter
+  would implement. Not imported by `index.ts` or anything else in `src/`,
+  not part of the plugin manifest, no runtime behavior.
 
 ## Manifest
 
@@ -155,6 +160,9 @@ Per the docs' plugin testing checklist:
 Scaffolded from [pascalorg/plugin-trees](https://github.com/pascalorg/plugin-trees)
 (Nature), Pascal's first-party reference plugin, MIT licensed. Zoning/
 compliance data model mirrors [thebossnow/aiblueprint-mcp](https://github.com/thebossnow/aiblueprint-mcp).
+`HOST_INTEGRATION.md`'s Phase 3 design follows the precedent set by
+[mintdotgg/mint-pascal-plugin](https://github.com/mintdotgg/mint-pascal-plugin)'s
+own `HOST_INTEGRATION.md`.
 
 ## License
 
