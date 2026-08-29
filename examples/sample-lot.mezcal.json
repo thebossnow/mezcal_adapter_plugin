@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "meta": {
+    "generatedBy": "aiblueprint-mcp (manually authored sample)",
+    "generatedAt": "2026-08-28T00:00:00Z"
+  },
+  "boundary": [
+    [0, 0],
+    [100, 0],
+    [100, 80],
+    [0, 80]
+  ],
+  "setbackEnvelope": [
+    [15, 10],
+    [95, 10],
+    [95, 70],
+    [15, 70]
+  ],
+  "footprints": [
+    {
+      "id": "existing-1",
+      "label": "Main House",
+      "kind": "existing",
+      "points": [
+        [15, 10],
+        [50, 10],
+        [50, 45],
+        [15, 45]
+      ],
+      "heightFt": 18
+    },
+    {
+      "id": "adu-1",
+      "label": "Proposed ADU",
+      "kind": "adu",
+      "points": [
+        [60, 10],
+        [90, 10],
+        [90, 35],
+        [60, 35]
+      ],
+      "heightFt": 16
+    }
+  ],
+  "requirements": {
+    "setbackFrontFt": 15,
+    "setbackRearFt": 10,
+    "setbackSideFt": 5,
+    "maxHeightFt": 16,
+    "maxCoveragePct": 50,
+    "maxSqft": 1200
+  },
+  "compliance": {
+    "overall": "pass",
+    "area": { "ok": true },
+    "setbacks": { "ok": true },
+    "coverage": { "ok": true, "message": "38% of lot area" },
+    "height": { "ok": true }
+  },
+  "warnings": [],
+  "notes": ["ADU footprint is within the max_sqft limit by 150 sq ft."]
+}

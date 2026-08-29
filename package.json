@@ -1,0 +1,64 @@
+{
+  "name": "mezcal-adapter-plugin",
+  "version": "0.1.0",
+  "description": "Pascal editor plugin that imports Mezcal (aiblueprint-mcp) site-plan and ADU compliance exports as a native `mezcal:site-plan` scene node — 3D massing, floor-plan boundary/setback lines, and a resolved-requirements inspector panel.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thebossnow/mezcal_adapter_plugin.git"
+  },
+  "homepage": "https://github.com/thebossnow/mezcal_adapter_plugin",
+  "bugs": {
+    "url": "https://github.com/thebossnow/mezcal_adapter_plugin/issues"
+  },
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "peerDependencies": {
+    "@pascal-app/core": ">=0.9.1 <1",
+    "@pascal-app/editor": ">=0.9.1 <1",
+    "@pascal-app/viewer": ">=0.9.1 <1",
+    "react": "^18 || ^19",
+    "three": "^0.185",
+    "zod": "^4"
+  },
+  "devDependencies": {
+    "@pascal-app/core": "0.9.1",
+    "@pascal-app/editor": "0.9.1",
+    "@pascal-app/viewer": "0.9.1",
+    "@types/bun": "^1.3.5",
+    "@types/node": "^22.20.1",
+    "@types/react": "^19.2.18",
+    "@types/three": "^0.184.1",
+    "react": "^19.2.8",
+    "three": "^0.185.1",
+    "typescript": "^6.0.3",
+    "zod": "^4.5.2",
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
+    "zustand": "^5.0.15"
+  },
+  "keywords": [
+    "pascal",
+    "3d",
+    "editor",
+    "plugin",
+    "aiblueprint-mcp",
+    "adu",
+    "site-plan"
+  ],
+  "license": "MIT"
+}
