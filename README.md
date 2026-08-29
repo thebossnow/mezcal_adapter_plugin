@@ -33,24 +33,22 @@ network call — and per the docs, a plugin manifest cannot request or register
 a live server adapter to an external service; only a *reviewed host* can do
 that. So this plugin does not talk to aiblueprint-mcp live.
 
-**Phase 1 (this repo) is import-only:** run aiblueprint-mcp through your
-existing MCP client (Claude Desktop, etc.), produce a JSON export in the shape
-`import.ts` validates (`MezcalExportV1` — see `examples/sample-lot.mezcal.json`),
-and import that file (or paste its contents) into Pascal via the **Mezcal**
-panel or a node's inspector. There are zero external network calls and no
+**Phase 1 (this repo) is import-only:** run aiblueprint-mcp's `project.export_mezcal`
+operation ([thebossnow/aiblueprint-mcp#35](https://github.com/thebossnow/aiblueprint-mcp/pull/35))
+through your existing MCP client (Claude Desktop, etc.), and import the
+resulting JSON — the shape `import.ts` validates as `MezcalExportV1` — into
+Pascal via the **Mezcal** panel or a node's inspector. `examples/sample-lot.mezcal.json`
+is a small hand-authored example; `examples/real-world-lot.mezcal.json` was
+actually produced by `export_mezcal` against an L-shaped lot and is checked
+against the parser/geometry/floorplan builders end-to-end in
+`src/real-export.test.ts` — a regression test that catches schema drift
+between the two repos. There are zero external network calls and no
 account/OAuth data anywhere in this plugin, which keeps it out of the docs'
 ["Connected services and personal data"](https://editor.pascal.app/docs/developers/plugins#connected-services-and-personal-data)
 review section entirely.
 
 **Not yet implemented (tracked as follow-ups, not silently missing):**
 
-- **`MezcalExportV1` export from aiblueprint-mcp itself.** Today that repo
-  exports GeoJSON/IFC and a separate `compliance.report` JSON blob; this
-  plugin's bundle format merges the two (boundary + footprints + resolved
-  requirements + compliance report in one file) so the plugin never
-  recomputes setback/coverage/height math the Python engine already did. That
-  merge needs to land as a small addition upstream — either a new
-  `view.export` format or a `project`/`compliance` convenience operation.
 - **Vertex editing.** The boundary/setback/footprint polygons are read-only,
   fixed at import (`floorplan.ts` deliberately omits `move-handle` /
   `floorplanAffordances` — see the comment there). Re-import to update.
@@ -124,12 +122,20 @@ Per the docs' plugin testing checklist:
       `floorplan.test.ts`) — no renderer/DOM required.
 - [x] Registry test confirming the manifest's node kind and panel wiring
       (`index.test.ts`).
+- [x] Round-tripped a bundle actually produced by aiblueprint-mcp's
+      `export_mezcal` (not hand-authored) through `parseMezcalExport` →
+      `SitePlanNode.parse` → `buildSitePlanGeometry`/`buildSitePlanFloorplan`
+      (`src/real-export.test.ts`).
 - [ ] Load via `setPluginDiscovery` in a real Pascal host and confirm the
-      dev console reports the plugin ID + node count. *(Needs a host to test
-      against — not verifiable from this repo alone.)*
+      dev console reports the plugin ID + node count. *(Confirmed not
+      possible with public tooling today: the Pascal CLI's `editor` runtime
+      has no plugin-discovery hook — `pascal plugin list` is read-only, and
+      the docs say installation/catalog commands aren't in the current CLI
+      release. Needs either a Pascal-reviewed host or Pascal's own source
+      repo.)*
 - [ ] Full project lifecycle (create → save → reload → uninstall →
-      reinstall) using `examples/sample-lot.mezcal.json`. *(Same — needs a
-      host.)*
+      reinstall) in an actual Pascal editor session. *(Same blocker as
+      above.)*
 
 ## Prepare-a-publishable-repository checklist
 
