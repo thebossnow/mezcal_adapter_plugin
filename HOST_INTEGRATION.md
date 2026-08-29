@@ -5,12 +5,15 @@ describes what a *reviewing host* would need to build to let this plugin
 talk to a live aiblueprint-mcp instance instead of the static-import flow
 described in the main [README](./README.md#what-this-is-and-isnt--phase-1-scope).
 
-**Scope.** This is only viable for a self-hosted Pascal instance
-(`npx @pascal-app/cli editor`) whose operator is willing to act as the
-reviewing host — the same operator who runs aiblueprint-mcp. It is out of
-scope for the public `editor.pascal.app` catalog under plugin API v1: per
-Pascal's plugin docs, a plugin manifest cannot request or register a live
-server adapter to an external service; only a reviewed host can do that.
+**Scope.** This needs a host whose server code the operator can actually
+extend — running Pascal from its own source repo, not the stock
+`npx @pascal-app/cli editor` release. Per this repo's own testing notes
+(README), that CLI's `editor` runtime has no plugin-discovery hook and no
+documented way to mount a custom API route today, so it can't host the
+adapter route below on its own. It is out of scope for the public
+`editor.pascal.app` catalog under plugin API v1 either way: per Pascal's
+plugin docs, a plugin manifest cannot request or register a live server
+adapter to an external service; only a reviewed host can do that.
 
 This design follows the precedent set by
 [`mintdotgg/mint-pascal-plugin`](https://github.com/mintdotgg/mint-pascal-plugin)'s
@@ -36,7 +39,7 @@ plugin package would export:
 ```
 Create /api/plugins/mezcal/[...path]:
   import { handleMezcalPascalRequest } from 'mezcal-adapter-plugin/server'
-  export { route as GET, route as POST }
+  export { handleMezcalPascalRequest as GET, handleMezcalPascalRequest as POST }
 ```
 
 The plugin owns the request-handling logic (translating Pascal-side
@@ -48,16 +51,24 @@ route and supplies its own origin. See `src/host-adapter.ts` for the
 
 Unlike Mint, which talks to fixed public endpoints (`api.mint.gg`,
 `mcp.mint.gg`), aiblueprint-mcp has no public hosted instance — every
-operator runs their own. So there's no domain to bake into this plugin or
-into Pascal's default CSP. Instead:
+operator runs their own. So there's no domain to bake into this plugin.
+
+The browser only ever calls the same-origin `/api/plugins/mezcal/[...path]`
+route; the outbound call to aiblueprint-mcp happens server-side, inside
+`handleMezcalPascalRequest`. That's a different case from Mint's CSP note
+(Mint's browser code fetches asset files directly from `cdn.mint.gg`, so
+*that* needs a CSP allowance) — here, browser CSP doesn't govern the
+adapter's server-to-server request at all, and adding the MCP origin to it
+would do nothing. Instead:
 
 - The host operator supplies their aiblueprint-mcp origin as adapter config
   (`MezcalHostAdapterConfig.mcpServerUrl` in `src/host-adapter.ts`), the same
   way they'd configure any other self-hosted service.
-- Pascal's Content Security Policy must allow that operator-supplied origin
-  for the adapter's outbound requests. Because it's operator-specific, this
-  has to be a host configuration step, not something the plugin manifest can
-  declare statically.
+- The host's *server-side* network egress (firewall rules, an allowlist for
+  outbound requests, whatever the deployment uses) needs to permit reaching
+  that operator-supplied origin. Because it's operator-specific, this is a
+  host configuration step, not something the plugin manifest can declare
+  statically.
 
 ## Authentication
 
