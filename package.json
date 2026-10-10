@@ -21,7 +21,8 @@
   },
   "files": [
     "src",
-    "README.md"
+    "README.md",
+    "HOST_INTEGRATION.md"
   ],
   "scripts": {
     "check-types": "tsc --noEmit",
